@@ -3,86 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RAI-ROBLOX CLOUD Edition</title>
+    <title>RAI-ROBLOX Secure Cloud</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --rbx-blue: #00a2ff; --rbx-bg: #0e0e11; --rbx-card: #1c1d22; --admin-gold: #ffb800; --danger: #ff4444; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body, html { margin: 0; padding: 0; background: var(--rbx-bg); color: #fff; font-family: 'Montserrat', sans-serif; height: 100vh; overflow: hidden; }
 
-        /* ЗАГРУЗЧИК */
         #loader { position: fixed; inset: 0; background: #000; z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .spinner { width: 40px; height: 40px; border: 4px solid #333; border-top-color: var(--rbx-blue); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ВХОД */
         #auth-page { display: none; position: fixed; inset: 0; background: #000; z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
         .auth-card { background: var(--rbx-card); width: 100%; max-width: 360px; padding: 35px; border-radius: 20px; text-align: center; border-bottom: 5px solid var(--rbx-blue); }
         .auth-input { width: 100%; padding: 14px; margin: 10px 0; background: #111; border: 1px solid #333; color: #fff; border-radius: 8px; font-size: 16px; }
 
-        /* ИНТЕРФЕЙС */
         #main-hub { display: none; height: 100vh; flex-direction: column; }
         header { height: 70px; background: #18191d; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid #25262d; }
-        .logo-text { font-weight: 900; font-size: 22px; letter-spacing: -1px; }
+        .logo-text { font-weight: 900; font-size: 22px; }
         .content { flex: 1; overflow-y: auto; padding: 20px; }
-        .grid-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: #eee; }
         
         .games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .game-item { background: var(--rbx-card); border-radius: 12px; overflow: hidden; border: 1px solid #25262d; transition: 0.2s; }
-        .game-item:active { transform: scale(0.95); }
+        .game-item { background: var(--rbx-card); border-radius: 12px; overflow: hidden; border: 1px solid #25262d; }
         .game-img { height: 110px; background: #25262d; display: flex; align-items: center; justify-content: center; font-size: 45px; }
         .game-name { padding: 12px; font-size: 13px; font-weight: 700; color: #fff; text-align: center; }
 
-        /* АДМИН ПАНЕЛЬ */
         #admin-panel { display: none; position: fixed; inset: 0; background: #0b0b0d; z-index: 5000; padding: 20px; overflow-y: auto; }
-        .code-area { width: 100%; height: 250px; background: #000; color: #00ffcc; font-family: monospace; border: 1px solid #333; padding: 10px; border-radius: 8px; margin: 10px 0; font-size: 12px; }
-        .manage-item { display: flex; align-items: center; justify-content: space-between; background: #1c1d22; padding: 10px; margin-bottom: 8px; border-radius: 8px; }
-        .del-btn { background: var(--danger); border: none; color: #fff; padding: 5px 10px; border-radius: 5px; font-weight: bold; }
+        .code-area { width: 100%; height: 200px; background: #000; color: #00ffcc; font-family: monospace; padding: 10px; border-radius: 8px; margin: 10px 0; font-size: 12px; }
 
-        /* ПЛЕЕР */
         #player-layer { display: none; position: fixed; inset: 0; background: #000; z-index: 30000; }
         iframe { width: 100%; height: 100%; border: none; }
-        .exit-btn { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.8); color: #fff; padding: 10px 20px; border-radius: 20px; border: 1px solid #444; font-weight: bold; z-index: 30001; }
+        .exit-btn { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.8); color: #fff; padding: 10px 20px; border-radius: 20px; font-weight: bold; z-index: 30001; }
         
         .adm-badge { background: var(--admin-gold); color: #000; padding: 3px 8px; border-radius: 5px; font-size: 10px; margin-left: 8px; font-weight: 900; }
+        .btn-main { width: 100%; padding: 15px; background: var(--rbx-blue); border: none; color: #fff; font-weight: 900; border-radius: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div id="loader">
         <div class="spinner"></div>
-        <p style="margin-top:20px; font-size:10px; color:#555;">CONNECTING TO CLOUD...</p>
+        <p style="margin-top:20px; font-size:10px; color:#555;">SECURE CONNECTING...</p>
     </div>
 
     <div id="auth-page">
         <div class="auth-card">
-            <h1 class="logo-text">ROBLOX <span style="color:var(--rbx-blue)">CLOUD</span></h1>
+            <h1 class="logo-text">ROBLOX <span style="color:var(--rbx-blue)">SECURE</span></h1>
+            <p id="auth-msg" style="font-size:12px; color:#888; margin-bottom:10px;">Введите почту и пароль</p>
             <input type="email" id="email-in" class="auth-input" placeholder="Email">
-            <input type="password" class="auth-input" placeholder="Пароль">
-            <button style="width:100%; padding:15px; background:var(--rbx-blue); border:none; color:#fff; font-weight:900; border-radius:8px;" onclick="manualLogin()">ВОЙТИ</button>
+            <input type="password" id="pass-in" class="auth-input" placeholder="Пароль">
+            <button class="btn-main" onclick="handleAuth()">ВОЙТИ / СОЗДАТЬ</button>
         </div>
     </div>
 
     <div id="main-hub">
         <header>
             <div class="logo-text">Home <span id="tag-area"></span></div>
-            <div id="admin-trigger" style="display:none; color:var(--admin-gold); font-size:11px; font-weight:900; border:1px solid var(--admin-gold); padding:5px 10px; border-radius:5px;" onclick="openAdmin()">STUDIO</div>
+            <div style="display:flex; gap:10px;">
+                <div id="admin-trigger" style="display:none; color:var(--admin-gold); font-size:11px; font-weight:900; border:1px solid var(--admin-gold); padding:5px 10px; border-radius:5px;" onclick="openAdmin()">STUDIO</div>
+                <div style="font-size:10px; border:1px solid #444; padding:5px; border-radius:5px;" onclick="logout()">LOGOUT</div>
+            </div>
         </header>
         <div class="content">
-            <div class="grid-title">Все игры проекта</div>
             <div id="games-list" class="games-grid"></div>
         </div>
     </div>
 
     <div id="admin-panel">
         <h2 style="color:var(--admin-gold)">CREATOR STUDIO</h2>
-        <div style="background:#1c1d22; padding:15px; border-radius:12px; margin-bottom:20px;">
-            <input type="text" id="g-name" class="auth-input" placeholder="Название">
-            <input type="text" id="g-emoji" class="auth-input" placeholder="Emoji">
-            <textarea id="g-code" class="code-area" placeholder="Вставь код игры..."></textarea>
-            <button onclick="publishGame()" style="width:100%; padding:15px; background:var(--rbx-blue); color:#fff; border:none; border-radius:8px; font-weight:bold;">ОПУБЛИКОВАТЬ В ОБЛАКО</button>
+        <div style="background:#1c1d22; padding:15px; border-radius:12px;">
+            <input type="text" id="g-name" class="auth-input" placeholder="Название игры">
+            <input type="text" id="g-emoji" class="auth-input" placeholder="Emoji (🚀)">
+            <textarea id="g-code" class="code-area" placeholder="Код (HTML/JS)..."></textarea>
+            <button class="btn-main" onclick="publishGame()">ОПУБЛИКОВАТЬ</button>
         </div>
-        <div id="manage-list"></div>
+        <div id="manage-list" style="margin-top:20px;"></div>
         <button onclick="closeAdmin()" style="width:100%; margin-top:10px; padding:10px; background:#333; color:#fff; border:none; border-radius:8px;">ЗАКРЫТЬ</button>
     </div>
 
@@ -95,7 +90,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <script>
-        const OWNER = "raimaslanov222@gmail.com";
+        const OWNER_EMAIL = "raimaslanov222@gmail.com";
         const firebaseConfig = {
             apiKey: "AIzaSyCFJQ4OKKStxVW7gUj1lS4KHwxGc1_QIwg",
             authDomain: "mymobilegame-b5e68.firebaseapp.com",
@@ -106,69 +101,92 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        let userMail = "";
         let library = [];
+        let userEmail = "";
 
         window.onload = async function() {
-            try {
-                // Авто-логин по IP
-                const res = await fetch('https://api.ipify.org?format=json');
-                const data = await res.json();
-                const saved = JSON.parse(localStorage.getItem('rai_ip_link'));
-                
-                await loadGamesFromCloud();
-
-                if(saved && saved.ip === data.ip) {
-                    autoLogin(saved.email);
-                } else {
-                    document.getElementById('loader').style.display = 'none';
-                    document.getElementById('auth-page').style.display = 'flex';
-                }
-            } catch (e) {
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('auth-page').style.display = 'flex';
-            }
+            await loadGames();
+            checkAutoLogin();
         };
 
-        async function loadGamesFromCloud() {
-            const snapshot = await db.collection('shared_games').get();
-            library = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            updateHubUI();
+        async function loadGames() {
+            const snap = await db.collection('shared_games').get();
+            library = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            renderHub();
         }
 
-        function manualLogin() {
-            const email = document.getElementById('email-in').value;
-            fetch('https://api.ipify.org?format=json').then(r => r.json()).then(data => {
-                localStorage.setItem('rai_ip_link', JSON.stringify({ ip: data.ip, email: email }));
-                autoLogin(email);
-            });
+        async function handleAuth() {
+            const email = document.getElementById('email-in').value.toLowerCase().trim();
+            const pass = document.getElementById('pass-in').value.trim();
+            if(!email || pass.length < 4) return alert("Введите почту и пароль (мин. 4 символа)");
+
+            const userRef = db.collection('users').doc(email);
+            const doc = await userRef.get();
+
+            if (!doc.exists) {
+                // Регистрация нового
+                await userRef.set({ password: pass });
+                alert("Аккаунт создан! Теперь это ваш пароль.");
+                completeLogin(email);
+            } else {
+                // Проверка пароля
+                if (doc.data().password === pass) {
+                    completeLogin(email);
+                } else {
+                    alert("Неверный пароль для этой почты!");
+                }
+            }
         }
 
-        function autoLogin(email) {
-            userMail = email;
+        async function completeLogin(email) {
+            userEmail = email;
+            // Привязка IP
+            const res = await fetch('https://api.ipify.org?format=json');
+            const data = await res.json();
+            localStorage.setItem('rai_session', JSON.stringify({ email: email, ip: data.ip }));
+            
+            showHub();
+        }
+
+        async function checkAutoLogin() {
+            const saved = JSON.parse(localStorage.getItem('rai_session'));
+            if(saved) {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                if(saved.ip === data.ip) {
+                    userEmail = saved.email;
+                    showHub();
+                    return;
+                }
+            }
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('auth-page').style.display = 'flex';
+        }
+
+        function showHub() {
             document.getElementById('loader').style.display = 'none';
             document.getElementById('auth-page').style.display = 'none';
             document.getElementById('main-hub').style.display = 'flex';
-            if(userMail === OWNER) {
+            if(userEmail === OWNER_EMAIL) {
                 document.getElementById('admin-trigger').style.display = 'block';
                 document.getElementById('tag-area').innerHTML = '<span class="adm-badge">ADMIN</span>';
             }
+            renderHub();
         }
 
-        function updateHubUI() {
+        function renderHub() {
             const list = document.getElementById('games-list');
-            const mList = document.getElementById('manage-list');
             list.innerHTML = library.map((g, i) => `
                 <div class="game-item" onclick="runEngine(${i})">
                     <div class="game-img">${g.emoji}</div>
                     <div class="game-name">${g.name}</div>
                 </div>`).join('');
-
-            if(userMail === OWNER) {
-                mList.innerHTML = '<h3>Удаление:</h3>' + library.map((g, i) => `
-                    <div class="manage-item">
+            
+            if(userEmail === OWNER_EMAIL) {
+                document.getElementById('manage-list').innerHTML = library.map(g => `
+                    <div style="display:flex; justify-content:space-between; background:#111; padding:10px; margin-top:5px; border-radius:5px;">
                         <span>${g.name}</span>
-                        <button class="del-btn" onclick="deleteFromCloud('${g.id}')">УДАЛИТЬ</button>
+                        <button style="background:red; color:white; border:none; border-radius:3px;" onclick="deleteGame('${g.id}')">DEL</button>
                     </div>`).join('');
             }
         }
@@ -177,27 +195,25 @@
             const n = document.getElementById('g-name').value, e = document.getElementById('g-emoji').value || "🎮", c = document.getElementById('g-code').value;
             if(!n || !c) return;
             await db.collection('shared_games').add({ name: n, emoji: e, code: c });
-            await loadGamesFromCloud();
+            await loadGames();
             closeAdmin();
         }
 
-        async function deleteFromCloud(id) {
-            if(confirm('Удалить из облака для всех?')) {
+        async function deleteGame(id) {
+            if(confirm("Удалить?")) {
                 await db.collection('shared_games').doc(id).delete();
-                await loadGamesFromCloud();
+                await loadGames();
             }
         }
 
+        function logout() { localStorage.removeItem('rai_session'); location.reload(); }
         function openAdmin() { document.getElementById('admin-panel').style.display = 'block'; }
         function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
         function runEngine(i) {
             document.getElementById('game-frame').srcdoc = library[i].code;
             document.getElementById('player-layer').style.display = 'block';
         }
-        function stopGame() {
-            document.getElementById('player-layer').style.display = 'none';
-            document.getElementById('game-frame').srcdoc = '';
-        }
+        function stopGame() { document.getElementById('player-layer').style.display = 'none'; document.getElementById('game-frame').srcdoc = ''; }
     </script>
 </body>
 </html>
