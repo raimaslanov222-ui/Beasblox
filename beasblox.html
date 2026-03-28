@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RAI-ROBLOX AUTO-AUTH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --rbx-blue: #00a2ff; --rbx-bg: #0e0e11; --rbx-card: #1c1d22; --admin-gold: #ffb800; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body, html { margin: 0; padding: 0; background: var(--rbx-bg); color: #fff; font-family: 'Montserrat', sans-serif; height: 100vh; overflow: hidden; }
+
+        /* ЭКРАН ЗАГРУЗКИ / ПРОВЕРКИ IP */
+        #loader { position: fixed; inset: 0; background: #000; z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #333; border-top-color: var(--rbx-blue); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* АВТОРИЗАЦИЯ */
+        #auth-page { display: none; position: fixed; inset: 0; background: #000; z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
+        .auth-card { background: var(--rbx-card); width: 100%; max-width: 360px; padding: 35px; border-radius: 20px; text-align: center; border-bottom: 5px solid var(--rbx-blue); }
+        .auth-input { width: 100%; padding: 14px; margin: 10px 0; background: #111; border: 1px solid #333; color: #fff; border-radius: 8px; }
+        
+        /* ХАБ */
+        #main-hub { display: none; height: 100vh; flex-direction: column; }
+        header { height: 70px; background: #18191d; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid #25262d; }
+        .logo-text { font-weight: 900; font-size: 22px; }
+        .content { flex: 1; overflow-y: auto; padding: 20px; }
+        .games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .game-item { background: var(--rbx-card); border-radius: 12px; overflow: hidden; border: 1px solid #25262d; }
+        .game-img { height: 110px; background: #25262d; display: flex; align-items: center; justify-content: center; font-size: 45px; }
+        .game-name { padding: 12px; font-size: 13px; font-weight: 700; }
+
+        /* ПАНЕЛЬ */
+        #admin-panel { display: none; position: fixed; inset: 0; background: #0b0b0d; z-index: 5000; padding: 20px; overflow-y: auto; }
+        .code-area { width: 100%; height: 250px; background: #000; color: #0f0; padding: 10px; margin: 10px 0; border-radius: 8px; }
+
+        /* ПЛЕЕР */
+        #player-layer { display: none; position: fixed; inset: 0; background: #000; z-index: 30000; }
+        iframe { width: 100%; height: 100%; border: none; }
+        .exit-btn { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.8); color: #fff; padding: 10px 20px; border-radius: 20px; border: 1px solid #444; font-weight: bold; }
+        
+        .adm-badge { background: var(--admin-gold); color: #000; padding: 3px 8px; border-radius: 5px; font-size: 10px; margin-left: 8px; font-weight: 900; }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <p style="margin-top:20px; font-size:12px; letter-spacing:2px; color:#555;">VERIFYING IP...</p>
+    </div>
+
+    <div id="auth-page">
+        <div class="auth-card">
+            <h1 class="logo-text">ROBLOX <span style="color:var(--rbx-blue)">AUTO</span></h1>
+            <p style="font-size:11px; color:#888; margin-bottom:20px;">IP не распознан. Войдите один раз для привязки.</p>
+            <input type="email" id="email-in" class="auth-input" placeholder="Email">
+            <input type="password" class="auth-input" placeholder="Паро fancy">
+            <button style="width:100%; padding:15px; background:var(--rbx-blue); border:none; color:#fff; font-weight:900; border-radius:8px;" onclick="manualLogin()">ПРИВЯЗАТЬ IP И ВОЙТИ</button>
+        </div>
+    </div>
+
+    <div id="main-hub">
+        <header>
+            <div class="logo-text">Home <span id="tag-area"></span></div>
+            <div id="admin-trigger" style="display:none; color:var(--admin-gold); font-size:11px; font-weight:900; border:1px solid var(--admin-gold); padding:5px 10px; border-radius:5px;" onclick="openAdmin()">MANAGE</div>
+        </header>
+        <div class="content">
+            <div class="games-grid" id="games-list"></div>
+        </div>
+    </div>
+
+    <div id="admin-panel">
+        <h2 style="color:var(--admin-gold)">CREATOR STUDIO</h2>
+        <input type="text" id="g-name" class="auth-input" placeholder="Название">
+        <input type="text" id="g-emoji" class="auth-input" placeholder="Emoji">
+        <textarea id="g-code" class="code-area" placeholder="Код игры..."></textarea>
+        <button onclick="publishGame()" style="width:100%; padding:15px; background:var(--rbx-blue); color:#fff; border:none; border-radius:8px; font-weight:bold;">ОПУБЛИКОВАТЬ</button>
+        <button onclick="closeAdmin()" style="width:100%; margin-top:10px; padding:10px; background:#333; color:#fff; border:none; border-radius:8px;">НАЗАД</button>
+    </div>
+
+    <div id="player-layer">
+        <button class="exit-btn" onclick="stopGame()">✕ EXIT</button>
+        <iframe id="game-frame" sandbox="allow-scripts allow-forms allow-modals allow-pointer-lock allow-same-origin"></iframe>
+    </div>
+
+    <script>
+        const OWNER = "raimaslanov222@gmail.com";
+        let userMail = "";
+        let library = JSON.parse(localStorage.getItem('rai_roblox_lib')) || [];
+
+        // 1. АВТО-ПРОВЕРКА IP ПРИ ЗАПУСКЕ
+        window.onload = async function() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                const currentIP = data.ip;
+                
+                // Проверяем, есть ли этот IP в памяти
+                const savedData = JSON.parse(localStorage.getItem('rai_ip_link'));
+                
+                if(savedData && savedData.ip === currentIP) {
+                    console.log("IP matched! Logging in as " + savedData.email);
+                    autoLogin(savedData.email);
+                } else {
+                    // Если IP новый или не совпал
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('auth-page').style.display = 'flex';
+                }
+            } catch (e) {
+                // Если нет интернета или ошибка API
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('auth-page').style.display = 'flex';
+            }
+        };
+
+        function manualLogin() {
+            const email = document.getElementById('email-in').value;
+            if(!email.includes('@')) return alert('Email!');
+            
+            // Получаем IP еще раз для привязки
+            fetch('https://api.ipify.org?format=json')
+                .then(r => r.json())
+                .then(data => {
+                    localStorage.setItem('rai_ip_link', JSON.stringify({ ip: data.ip, email: email }));
+                    autoLogin(email);
+                });
+        }
+
+        function autoLogin(email) {
+            userMail = email;
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('auth-page').style.display = 'none';
+            document.getElementById('main-hub').style.display = 'flex';
+            
+            if(userMail === OWNER) {
+                document.getElementById('admin-trigger').style.display = 'block';
+                document.getElementById('tag-area').innerHTML = '<span class="adm-badge">ADMIN</span>';
+            }
+            updateHub();
+        }
+
+        function updateHub() {
+            const list = document.getElementById('games-list');
+            list.innerHTML = library.map((g, i) => `
+                <div class="game-item" onclick="runEngine(${i})">
+                    <div class="game-img">${g.emoji}</div>
+                    <div class="game-name">${g.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function publishGame() {
+            const n = document.getElementById('g-name').value, e = document.getElementById('g-emoji').value || "🎮", c = document.getElementById('g-code').value;
+            if(!n || !c) return;
+            library.push({ name: n, emoji: e, code: c });
+            localStorage.setItem('rai_roblox_lib', JSON.stringify(library));
+            updateHub(); closeAdmin();
+        }
+
+        function openAdmin() { document.getElementById('admin-panel').style.display = 'block'; }
+        function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
+        function runEngine(i) {
+            document.getElementById('game-frame').srcdoc = library[i].code;
+            document.getElementById('player-layer').style.display = 'block';
+        }
+        function stopGame() {
+            document.getElementById('player-layer').style.display = 'none';
+            document.getElementById('game-frame').srcdoc = '';
+        }
+    </script>
+</body>
+</html>
