@@ -1,2 +1,0 @@
-# Beasblox
-More Game
