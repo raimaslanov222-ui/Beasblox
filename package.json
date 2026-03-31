@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "mkdir -p www && cp index.html www/ && cp -r assets www/ 2>/dev/null || true",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "add-android": "npx cap add android"
   },
   "keywords": [],
   "author": "",
