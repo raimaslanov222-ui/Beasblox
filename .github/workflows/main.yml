@@ -23,7 +23,7 @@ jobs:
         run: npm install
 
       - name: Initialize Capacitor Project
-        run: npx cap update
+        run: npm run init-android & npm run full-build
 
       - name: Setup Java
         uses: actions/setup-java@v4
