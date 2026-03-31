@@ -1,0 +1,22 @@
+name: Build APK
+on: [push] # Собирает каждый раз, когда ты сохраняешь код
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Android APK
+        uses: tttstudios/html-to-apk-action@v1.0.0
+        with:
+          app-name: "Beasblox"
+          app-id: "com.raimaslanov.beasblox"
+          icon-path: "icon.png" # Убедись, что у тебя есть иконка или удали эту строку
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-game-apk
+          path: ./*.apk
