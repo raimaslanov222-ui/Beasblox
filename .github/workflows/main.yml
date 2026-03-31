@@ -33,7 +33,7 @@ jobs:
       - name: Initialize Capacitor Project
         run: |
           # Инициализируем проект (com.mygame.app можно заменить на свое)
-          npx cap init "MyMobileGame" "com.mygame.app" --web-dir www
+          npx cap update "MyMobileGame" "com.mygame.app" --web-dir www
           npx cap add android
 
       - name: Build Android App
