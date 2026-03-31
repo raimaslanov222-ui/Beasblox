@@ -1,11 +1,14 @@
 name: Build Android APK
-on: [push]
+
+on:
+  push:
+    branches: [ main, master ] # Сработает при пуше в любую из этих веток
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout Source
         uses: actions/checkout@v4
 
       - name: Set up Node.js
@@ -13,18 +16,34 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Bubblewrap
-        run: npm install -g @bubblewrap/cli
-
-      - name: Build APK
+      - name: Install Capacitor
         run: |
-          # Этот скрипт создаст базовую оболочку для твоего HTML
-          npx @bubblewrap/cli init --manifest=https://raimaslanov222.github.io/Beasblox/manifest.json --yes
-          npx @bubblewrap/cli build --yes
+          npm init -y
+          npm install @capacitor/cli @capacitor/core @capacitor/android
 
-      - name: Upload APK
+      - name: Prepare Web Assets
+        run: |
+          # Создаем временную папку для сборки
+          mkdir -p www
+          # Копируем все ваши файлы (html, js, css, ассеты) в папку www
+          cp -r * www/ || true
+          # Удаляем саму папку www из копии, чтобы не было рекурсии
+          rm -rf www/www
+
+      - name: Initialize Capacitor Project
+        run: |
+          # Инициализируем проект (com.mygame.app можно заменить на свое)
+          npx cap init "MyMobileGame" "com.mygame.app" --web-dir www
+          npx cap add android
+
+      - name: Build Android App
+        run: |
+          npx cap sync android
+          cd android && ./gradlew assembleDebug
+
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Beasblox-Release-APK
-          path: ./*.apk
+          name: Game-Debug-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
           
