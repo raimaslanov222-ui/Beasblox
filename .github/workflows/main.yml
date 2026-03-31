@@ -1,22 +1,30 @@
-name: Build APK
-on: [push] # Собирает каждый раз, когда ты сохраняешь код
+name: Build Android APK
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Build Android APK
-        uses: tttstudios/html-to-apk-action@v1.0.0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          app-name: "Beasblox"
-          app-id: "com.raimaslanov.beasblox"
-          icon-path: "icon.png" # Убедись, что у тебя есть иконка или удали эту строку
+          node-node: 20
+
+      - name: Install Bubblewrap
+        run: npm install -g @bubblewrap/cli
+
+      - name: Build APK
+        run: |
+          # Этот скрипт создаст базовую оболочку для твоего HTML
+          npx @bubblewrap/cli init --manifest=https://raimaslanov222.github.io/Beasblox/manifest.json --yes
+          npx @bubblewrap/cli build --yes
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: my-game-apk
+          name: Beasblox-Release-APK
           path: ./*.apk
+          
