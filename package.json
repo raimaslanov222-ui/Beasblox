@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "mkdir -p www && cp index.html www/",
-    "add-android": "npx cap add android",
+    "init-android": "npx cap init && npx cap add android",
     "sync-android": "npx cap sync android",
     "full-build": "npm run build && npx cap copy && npx cap sync"
   },
